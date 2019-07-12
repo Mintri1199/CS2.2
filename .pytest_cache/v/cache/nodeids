@@ -1,0 +1,5 @@
+[
+  "graph_tests.py::VertexTests::test_add_neighbor",
+  "graph_tests.py::VertexTests::test_init",
+  "graph_tests.py::VertexTests::test_negatives"
+]

@@ -16,10 +16,7 @@ class Vertex(object):
 
     def add_neighbor(self, vertex, weight=0):
         """add a neighbor along a weighted edge"""
-        if vertex in self.neighbors:
-            return
-        else:
-            self.neighbors[vertex] = weight
+        self.neighbors[vertex] = weight
 
     def __str__(self):
         """output the list of neighbors of this vertex"""
@@ -35,13 +32,7 @@ class Vertex(object):
 
     def get_edge_weight(self, vertex):
         """return the weight of this edge"""
-        return self.neighbors[vertex]
-
-
-""" Graph Class
-A class demonstrating the essential
-facts and functionalities of graphs.
-"""
+        return self.neighbors[vertex] if vertex in self.neighbors else None
 
 
 class Graph:
@@ -90,8 +81,6 @@ class Graph:
 
 
 # Driver code
-
-
 if __name__ == "__main__":
 
     # Challenge 1: Create the graph
@@ -102,8 +91,6 @@ if __name__ == "__main__":
     graph.add_vertex("Friend 1")
     graph.add_vertex("Friend 2")
     graph.add_vertex("Friend 3")
-
-    # ...  add all 10 including you ...
 
     # Add connections (non weighted edges for now)
     graph.add_edge("Friend 1", "Friend 2")
