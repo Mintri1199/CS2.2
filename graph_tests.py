@@ -38,4 +38,115 @@ class VertexTests(unittest.TestCase):
 
 
 class GraphTests(unittest.TestCase):
-    pass
+
+    def setUp(self):
+        self.graph = Graph()
+
+    def test_init(self):
+        assert not self.graph.vertices_dict
+        assert self.graph.num_vertices is 0
+
+    def test_add_vertex(self):
+        # Add one vertex
+        self.graph.add_vertex("B")
+        assert self.graph.num_vertices is 1
+        assert len(self.graph.vertices_dict.keys()) is 1
+        assert "B" in self.graph.vertices_dict
+
+        # Add another vertex
+        self.graph.add_vertex("A")
+        assert self.graph.num_vertices is 2
+        assert len(self.graph.vertices_dict.keys()) is 2
+        assert "A" in self.graph.vertices_dict
+
+        # Should avoid adding duplicate
+        self.graph.add_vertex("B")
+        assert self.graph.num_vertices is 2
+        assert len(self.graph.vertices_dict.keys()) is 2
+
+    def test_get_vertex(self):
+        # Add vertex
+        self.graph.add_vertex("B")
+
+        # Find the newly added vertex
+        found_vertex = self.graph.get_vertex("B")
+        assert found_vertex.id is "B"
+
+        # Test for non existing vertex
+        assert self.graph.get_vertex("C") is None
+
+    def test_add_edge(self):
+        # Populate the graph with vertices A, B, C, D, E, F, G
+        self.graph.add_vertex("A")
+        self.graph.add_vertex("B")
+        self.graph.add_vertex("C")
+        self.graph.add_vertex("D")
+        self.graph.add_vertex("E")
+        self.graph.add_vertex("F")
+        self.graph.add_vertex("G")
+
+        # Add edge from A to B with the cost of 10
+        self.graph.add_edge("A", "B", 10)
+        vertex_a = self.graph.get_vertex("A")
+        vertex_b = self.graph.get_vertex("B")
+        vertex_c = self.graph.get_vertex("C")
+
+        # Vertex A should have an edge to vertex B with the cost of 10
+        assert "B" in vertex_a.neighbors
+        assert vertex_a.get_edge_weight("B") is 10
+        assert "A" in vertex_b.neighbors
+        assert vertex_b.get_edge_weight("A") is 10
+
+        self.graph.add_edge("A", "C", 5)
+        self.graph.add_edge("B", "C", 10)
+
+        assert "C" in vertex_a.neighbors and "C" in vertex_b.neighbors
+        assert vertex_a.get_edge_weight("C") is 5
+        assert vertex_b.get_edge_weight("C") is 10
+        assert vertex_c.get_edge_weight("A") is 5 and vertex_c.get_edge_weight("B") is 10
+
+        # Test for bad inputs
+        assert self.graph.add_edge("O", "B", 12) is None
+
+        # Made vertex A have 5 edges / neighbor
+        self.graph.add_edge("A", "D", 11)
+        self.graph.add_edge("A", "E", 12)
+        self.graph.add_edge("A", "F", 45)
+        # Vertex A neighbors = [B, C, D, E, F]
+        # Graph should refuse add an edge from A to G
+        assert self.graph.add_edge("A", "G") is None
+        assert vertex_a.neighbors["F"] is 45
+        assert "G" not in vertex_a.neighbors
+
+
+    def test_get_verticles(self):
+        # Populate the graph with vertices A, B, C
+        self.graph.add_vertex("B")
+        self.graph.add_vertex("A")
+        self.graph.add_vertex("C")
+
+        vertices_list = self.graph.get_vertices()
+        assert list
+        assert len(vertices_list) is 3
+        assert "A" in vertices_list
+        assert "B" in vertices_list
+        assert "C" in vertices_list
+
+    def test_get_edges(self):
+        # Populate the graph with vertices A, B, C
+        self.graph.add_vertex("B")
+        self.graph.add_vertex("A")
+        self.graph.add_vertex("C")
+
+        self.graph.add_edge("A", "B", 10)
+        self.graph.add_edge("A", "C", 5)
+        self.graph.add_edge("B", "C", 10)
+
+        edges_set = self.graph.get_edges()
+
+        assert len(edges_set) is 3
+        assert ("A", "B", 10) in edges_set or ("B", "A", 10)
+        assert ("A", "C", 5) in edges_set or ("C", "A", 5) in edges_set
+        assert ("B", "C", 10) in edges_set or ("C", "B", 10) in edges_set
+
+

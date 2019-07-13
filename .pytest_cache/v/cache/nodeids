@@ -1,5 +1,11 @@
 [
   "graph_tests.py::VertexTests::test_add_neighbor",
   "graph_tests.py::VertexTests::test_init",
-  "graph_tests.py::VertexTests::test_negatives"
+  "graph_tests.py::VertexTests::test_negatives",
+  "graph_tests.py::GraphTests::test_add_edge",
+  "graph_tests.py::GraphTests::test_add_vertex",
+  "graph_tests.py::GraphTests::test_get_edges",
+  "graph_tests.py::GraphTests::test_get_vertex",
+  "graph_tests.py::GraphTests::test_get_verticles",
+  "graph_tests.py::GraphTests::test_init"
 ]

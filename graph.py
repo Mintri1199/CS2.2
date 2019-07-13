@@ -35,17 +35,18 @@ class Vertex(object):
         return self.neighbors[vertex] if vertex in self.neighbors else None
 
 
+# This is an undirected graph
+
 class Graph:
     def __init__(self):
         """ initializes a graph object with an empty dictionary."""
         self.vertices_dict = {}
         self.num_vertices = 0
+        self.total_edges = 0  # Number of all unique edges
 
     def add_vertex(self, key):
         """add a new vertex object to the graph with
         the given key and return the vertex """
-
-        self.num_vertices += 1
 
         if key in self.vertices_dict:
             print("Vertex: " + key + " already exist")
@@ -54,25 +55,63 @@ class Graph:
         new_vertex = Vertex(key)
 
         self.vertices_dict[key] = new_vertex
+        self.num_vertices += 1
 
         return new_vertex
 
     def get_vertex(self, key):
         """return the vertex if it exists"""
-        return self.vertices_dict[key] if key in self.vertices_dict[key] else None
+        return self.vertices_dict[key] if key in self.vertices_dict else None
 
     def add_edge(self, from_vert, to_vert, cost=0):
         """add an edge from one to another vertex with a cost"""
-        assert from_vert != to_vert, 'Both from vertex and to vertex are the same'
-        assert from_vert in self.vertices_dict, 'From vertex is not in dictionary of vertices'
-        assert to_vert in self.vertices_dict, 'To vertex is not in dictionary of vertices'
+        # Handle bad inputs and edge cases
+        if from_vert == to_vert:
+            print('Both from vertex and to vertex are the same')
+            return
+
+        elif from_vert not in self.vertices_dict or to_vert not in self.vertices_dict:
+            print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
+            return
+
+        elif len(self.vertices_dict[from_vert].get_neighbors()) >= 5:
+            print('{} is too popular already'.format(from_vert))
+            return
+
+        elif len(self.vertices_dict[to_vert].get_neighbors()) >= 5:
+            print('{} is too popular already'.format(to_vert))
+            return
 
         home_vertex = self.vertices_dict[from_vert]
         home_vertex.add_neighbor(to_vert, cost)
 
+        neighbor_vertex = self.vertices_dict[to_vert]
+        neighbor_vertex.add_neighbor(from_vert, cost)
+
+        self.total_edges += 1
+
     def get_vertices(self):
         """return all the vertices in the graph"""
         return self.vertices_dict.keys()
+
+    def get_edges(self):
+        """ Return a set of all unique the edges in the graph"""
+        # Store a tuple ( from_vertex, to_vertex, weight)
+        unique_edges = set()
+
+        for vertex in self.get_vertices():
+            curr_vertex = self.vertices_dict[vertex]
+            for neighbor in curr_vertex.get_neighbors():
+
+                edge = (vertex, neighbor, curr_vertex.neighbors[neighbor])
+                reversed_edge = (neighbor, vertex, curr_vertex.neighbors[neighbor])
+
+                if reversed_edge in unique_edges:
+                    pass
+                else:
+                    unique_edges.add(edge)
+
+        return unique_edges
 
     def __iter__(self):
         """iterate over the vertex objects in the
@@ -101,6 +140,5 @@ if __name__ == "__main__":
     print("The vertices are: ", graph.get_vertices(), "\n")
 
     print("The edges are: ")
-    for vertex in graph:
-        for neighbor in vertex.get_neighbors():
-            print("( {} , {} )".format(vertex.get_id(), neighbor))
+    for edge in graph.get_edges():
+        print(edge)
