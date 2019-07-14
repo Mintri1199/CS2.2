@@ -118,7 +118,6 @@ class GraphTests(unittest.TestCase):
         assert vertex_a.neighbors["F"] is 45
         assert "G" not in vertex_a.neighbors
 
-
     def test_get_verticles(self):
         # Populate the graph with vertices A, B, C
         self.graph.add_vertex("B")

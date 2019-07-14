@@ -1,4 +1,7 @@
-""" Vertex Class
+from linked_queue import LinkedQueue
+
+""" 
+Vertex Class
 A helper class for the Graph class that defines vertices and vertex neighbors.
 """
 
@@ -13,6 +16,7 @@ class Vertex(object):
         """
         self.id = vertex
         self.neighbors = {}
+        self.visited = False
 
     def add_neighbor(self, vertex, weight=0):
         """add a neighbor along a weighted edge"""
@@ -43,6 +47,11 @@ class Graph:
         self.vertices_dict = {}
         self.num_vertices = 0
         self.total_edges = 0  # Number of all unique edges
+
+    def __iter__(self):
+        """iterate over the vertex objects in the
+        graph, to use sytax: for v in g"""
+        return iter(self.vertices_dict.values())
 
     def add_vertex(self, key):
         """add a new vertex object to the graph with
@@ -99,25 +108,79 @@ class Graph:
         # Store a tuple ( from_vertex, to_vertex, weight)
         unique_edges = set()
 
-        for vertex in self.get_vertices():
-            curr_vertex = self.vertices_dict[vertex]
-            for neighbor in curr_vertex.get_neighbors():
-
-                edge = (vertex, neighbor, curr_vertex.neighbors[neighbor])
-                reversed_edge = (neighbor, vertex, curr_vertex.neighbors[neighbor])
+        for vertex in self:
+            for neighbor in vertex.get_neighbors():
+                curr_edge = (vertex.id, neighbor, vertex.neighbors[neighbor])
+                reversed_edge = (neighbor, vertex.id, vertex.neighbors[neighbor])
 
                 if reversed_edge in unique_edges:
                     pass
                 else:
-                    unique_edges.add(edge)
+                    unique_edges.add(curr_edge)
 
         return unique_edges
 
-    def __iter__(self):
-        """iterate over the vertex objects in the
-        graph, to use sytax: for v in g"""
-        return iter(self.vertices_dict.values())
+    def is_empty(self):
+        """Return true if the graph doesn't have any vertices"""
+        return len(self.get_vertices()) is 0
 
+    def breadth_first_search(self, vertex, length):
+        vertices = set()
+        if vertex in self.vertices_dict:
+            self._breadth_first_search(vertex, length, vertices.add)
+
+        return vertices
+
+    # TODO: Figure out how to assign the distance correctly when traversing
+    def _breadth_first_search(self, vertex, length, visit):
+        """ Perform breadth first search and return all nodes that met the require length from the inputted vertex"""
+        # Create queue to store nodes not yet traversed in level-order
+        queue = LinkedQueue()
+
+        # Enqueue given starting node
+        queue.enqueue(self.vertices_dict[vertex])
+        visited_dict = {self.vertices_dict[vertex].id: (0, None)}  # A dictionary to keep track of the visited vertices
+
+        curr_length = 0
+
+        # Loop until the length has been reach
+        while not queue.is_empty() and curr_length <= length:
+
+            curr_vertex = queue.dequeue()
+
+            # visited_dict[curr_vertex.id] = curr_length
+            # if visited_dict[curr_vertex.id] == length:
+            #     visit(curr_vertex.id)
+
+            if queue.is_empty():
+                curr_length += 1
+
+
+            for neighbor in curr_vertex.get_neighbors():
+                if neighbor not in visited_dict:
+                    visited_dict[neighbor] = (curr_length, curr_vertex.id)
+                    queue.enqueue(self.vertices_dict[neighbor])
+
+
+            # Dequeue vertex at front of queue
+            # curr_vertex = queue.dequeue()
+            #
+            # # Add the vertex in the visited dictionary
+            # if curr_vertex.id not in visited_dict:
+            #     visited_dict[curr_vertex.id] = curr_length
+            #
+            # if visited_dict[curr_vertex.id] == length:
+            #     visit(curr_vertex.id)
+            #
+            # # Reach the required length (It bit buggy)
+            # for neighbor in curr_vertex.get_neighbors():
+            #     if neighbor not in visited_dict:
+            #         queue.enqueue(self.vertices_dict[neighbor])
+            #         visited_dict[neighbor] = curr_length + 1
+            #         # if curr_length == length:
+            #         #     visit(self.vertices_dict[neighbor])
+
+        print(visited_dict)
 
 # Driver code
 if __name__ == "__main__":
@@ -127,14 +190,21 @@ if __name__ == "__main__":
     graph = Graph()
 
     # Add your friends
-    graph.add_vertex("Friend 1")
-    graph.add_vertex("Friend 2")
-    graph.add_vertex("Friend 3")
+    graph.add_vertex("Friend A")
+    graph.add_vertex("Friend B")
+    graph.add_vertex("Friend C")
+    graph.add_vertex("Friend D")
+    graph.add_vertex("Friend E")
+    graph.add_vertex("Friend F")
 
     # Add connections (non weighted edges for now)
-    graph.add_edge("Friend 1", "Friend 2")
-    graph.add_edge("Friend 2", "Friend 3")
-
+    graph.add_edge("Friend A", "Friend B")
+    graph.add_edge("Friend A", "Friend C")
+    graph.add_edge("Friend B", "Friend C")
+    graph.add_edge("Friend C", "Friend D")
+    graph.add_edge("Friend C", "Friend E")
+    graph.add_edge("Friend C", "Friend F")
+    graph.add_edge("Friend A", "Friend F")
     # Challenge 1: Output the vertices & edges
     # Print vertices
     print("The vertices are: ", graph.get_vertices(), "\n")
@@ -142,3 +212,8 @@ if __name__ == "__main__":
     print("The edges are: ")
     for edge in graph.get_edges():
         print(edge)
+
+    # Chapter 3 BFS
+    print("Vertices that are 2 away from Vertex friend A are:")
+    graph.breadth_first_search("Friend A", 2)
+    #     print(vertex)
