@@ -4,7 +4,7 @@
 #   are vertices.
 # If a line start with a open parenthesis then its an edge
 #   Continue until the file has been read
-
+import sys
 
 class Vertex(object):
 
@@ -39,11 +39,11 @@ class Vertex(object):
 
 class Graph:
 
-    def __init__(self, direct=False):
+    def __init__(self, undirected=False):
         self.vertices_dict = {}
         self.num_vertices = 0
         self.num_edges = 0
-        self.direct = direct
+        self.undirected = undirected
 
     def __iter__(self):
         """iterate over the vertex objects in the
@@ -80,7 +80,7 @@ class Graph:
         home_vertex.add_neighbor(to_vert, cost)
         self.num_edges += 1
 
-        if not self.direct:
+        if self.undirected:
             dest_vertex = self.vertices_dict[from_vert]
             dest_vertex.add_neighbor(from_vert, cost)
             self.num_edges += 1
@@ -103,11 +103,10 @@ class Graph:
 
     def read_file(self, text_file):
         """Read the given file and add all the vertices and edges"""
-        with open(text_file, 'rU') as file:
-
+        with open(text_file, 'r') as file:
             for line in file:
-                if len(line) == 1:
-                    self.direct = line == 'D'
+                if len(line) == 2:
+                    self.undirected = line == 'D\n'
 
                 elif line[0] != "(":
                     self._read_vertices(line)
@@ -120,15 +119,35 @@ class Graph:
         from_vertex = ''
         to_vertex = ''
 
-
     def _read_vertices(self, text):
         """Read the text and add vertices"""
         curr_key = ''
-        for char in text:
+        for index in range(len(text) - 1):
+
+            char = text[index]
+
             if char == ',':
                 self.add_vertex(curr_key)
                 curr_key = ''
             else:
                 curr_key += char
+                if index == len(text) - 2:
+                    self.add_vertex(curr_key)
+
+
+if __name__ == "__main__":
+    # Create a graph
+    graph = Graph()
+
+    # filename = sys.argv[1]
+
+    temp_file = "graph_data.txt"
+
+    graph.read_file(temp_file)
+    
+    print(graph.get_vertices())
+    print(graph.num_vertices)  # should print 0
+
+
 
 
