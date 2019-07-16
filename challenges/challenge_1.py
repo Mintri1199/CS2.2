@@ -76,14 +76,21 @@ class Graph:
             print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
             return
 
+        reversed_edge = (to_vert, from_vert, cost)
+
+        # Prevent duplicate edges in simple graph
+        if reversed_edge in self.vertices_dict and not self.undirected:
+            return
+
+        # Add to_vertex as neighbor to from_vertex
         home_vertex = self.vertices_dict[from_vert]
         home_vertex.add_neighbor(to_vert, cost)
         self.num_edges += 1
 
+        # Add from_vertex as neighbor to to_vertex is it a simple graph
         if self.undirected:
-            dest_vertex = self.vertices_dict[from_vert]
-            dest_vertex.add_neighbor(from_vert, cost)
-            self.num_edges += 1
+            neighbor_vertex = self.vertices_dict[from_vert]
+            neighbor_vertex.add_neighbor(from_vert, cost)
 
     def get_vertices(self):
         """return all the vertices in the graph"""
@@ -96,8 +103,13 @@ class Graph:
 
         for vertex in self:
             for neighbor in vertex.get_neighbors():
-                curr_edge = (vertex.id, neighbor, vertex.neighbors[neighbor])
-                unique_edges.add(curr_edge)
+                curr_edge = (vertex.data, neighbor, vertex.neighbors[neighbor])
+                reversed_edge = (neighbor, vertex.data, vertex.neighbors[neighbor])
+
+                if reversed_edge in unique_edges and self.undirected:
+                    pass
+                else:
+                    unique_edges.add(curr_edge)
 
         return unique_edges
 
@@ -106,7 +118,7 @@ class Graph:
         with open(text_file, 'r') as file:
             for line in file:
                 if len(line) == 2:
-                    self.undirected = line == 'D\n'
+                    self.undirected = line[0] == 'D'
 
                 elif line[0] != "(":
                     self._read_vertices(line)
@@ -116,8 +128,38 @@ class Graph:
 
     def _read_edge(self, text):
         """Read the text and add the edge to the graph"""
+        cost = 0
+        key = ''
         from_vertex = ''
         to_vertex = ''
+        get_from = False
+        get_to = False
+
+        for index in range(len(text) - 1):
+            char = text[index]
+
+            if char == '(':
+                pass
+
+            elif char == ')' and get_from and get_to and key != '':
+                cost = int(key)
+
+            elif char == ',':
+
+                if not get_from:
+                    from_vertex = key
+                    get_from = True
+                    key = ''
+
+                elif not get_to:
+                    to_vertex = key
+                    get_to = True
+                    key = ''
+
+            else:
+                key += char
+
+        self.add_edge(from_vertex, to_vertex, cost)
 
     def _read_vertices(self, text):
         """Read the text and add vertices"""
@@ -146,7 +188,10 @@ if __name__ == "__main__":
     graph.read_file(temp_file)
     
     print(graph.get_vertices())
-    print(graph.num_vertices)  # should print 0
+    print(graph.num_vertices)
+    print(graph.num_edges)
+    for edge in graph.get_edges():
+        print(edge)
 
 
 
