@@ -104,7 +104,6 @@ class Graph:
             neighbor_vertex = self.vertices_dict[from_vert]
             neighbor_vertex.add_neighbor(from_vert, cost)
 
-
     def get_vertices(self):
         """
         Return all the vertices in the graph

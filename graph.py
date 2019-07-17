@@ -9,7 +9,8 @@ A helper class for the Graph class that defines vertices and vertex neighbors.
 class Vertex(object):
 
     def __init__(self, vertex):
-        """initialize a vertex and its neighbors
+        """
+        Initialize a vertex and its neighbors
         neighbors: set of vertices adjacent to self,
         stored in a dictionary with key = vertex,
         value = weight of edge between self and neighbor.
@@ -18,7 +19,10 @@ class Vertex(object):
         self.neighbors = {}
 
     def add_neighbor(self, vertex, weight=0):
-        """add a neighbor along a weighted edge"""
+        """
+        Add a neighbor along a weighted edge
+        Runtime: O(1)
+        """
         self.neighbors[vertex] = weight
 
     def __str__(self):
@@ -26,15 +30,24 @@ class Vertex(object):
         return str(self.id) + " adjacent to " + str([x for x in self.neighbors.keys()])
 
     def get_neighbors(self):
-        """return the neighbors of this vertex"""
+        """
+        Return the neighbors of this vertex
+        Runtime: O(n) where n is the number of neighbors
+        """
         return self.neighbors.keys()
 
     def get_id(self):
-        """return the id of this vertex"""
+        """
+        Return the id of this vertex
+        Runtime: O(1)
+        """
         return self.id
 
     def get_edge_weight(self, vertex):
-        """return the weight of this edge"""
+        """
+        Return the weight of this edge
+        Runtime: O(1)
+        """
         return self.neighbors[vertex] if vertex in self.neighbors else None
 
 
@@ -53,8 +66,10 @@ class Graph:
         return iter(self.vertices_dict.values())
 
     def add_vertex(self, key):
-        """add a new vertex object to the graph with
-        the given key and return the vertex """
+        """
+        Add a new vertex object to the graph with the given key and return the vertex
+        Runtime: O(1)* since the graph store the vertices as a dictionary
+        """
 
         if key in self.vertices_dict:
             print("Vertex: " + key + " already exist")
@@ -68,11 +83,18 @@ class Graph:
         return new_vertex
 
     def get_vertex(self, key):
-        """return the vertex if it exists"""
+        """
+        Return the vertex if it exists
+        Runtime: O(1) since the graph store the vertices as a dictionary
+        """
         return self.vertices_dict[key] if key in self.vertices_dict else None
 
     def add_edge(self, from_vert, to_vert, cost=0):
-        """add an edge from one to another vertex with a cost"""
+        """
+        Add an edge from one to another vertex with a cost
+        Runtime: O(1) since the graph store vertices as a dictionary and
+                the Vertex class store neighbors in a dictionary.
+        """
         # Handle bad inputs and edge cases
         if from_vert == to_vert:
             print('Both from vertex and to vertex are the same')
@@ -99,11 +121,17 @@ class Graph:
         self.total_edges += 1
 
     def get_vertices(self):
-        """return all the vertices in the graph"""
+        """
+        Return all the vertices in the graph
+        Runtime: O(n) where n is the number of keys in dictionary
+        """
         return self.vertices_dict.keys()
 
     def get_edges(self):
-        """ Return a set of all unique the edges in the graph"""
+        """
+        Return a set of all unique the edges in the graph
+        Runtime: O(V*E) where V is the number of vertices and E is the number of edges for a vertex
+        """
         # Store a tuple ( from_vertex, to_vertex, weight)
         unique_edges = set()
 
@@ -124,7 +152,11 @@ class Graph:
         return len(self.get_vertices()) is 0
 
     def breadth_first_search(self, vertex, length):
-        """ Perform breadth first search and return all nodes that met the require length from the inputted vertex"""
+        """
+        Perform breadth first search and return all nodes that met
+        the require length from the inputted vertex.
+        Runtime: O(n) where n is the number of vertices in the graph
+        """
         if vertex not in self.vertices_dict:
             return
 
