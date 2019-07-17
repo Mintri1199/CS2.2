@@ -148,4 +148,39 @@ class GraphTests(unittest.TestCase):
         assert ("A", "C", 5) in edges_set or ("C", "A", 5) in edges_set
         assert ("B", "C", 10) in edges_set or ("C", "B", 10) in edges_set
 
+    def test_BFS(self):
+        # Populate the graph with vertices
+        self.graph.add_vertex("A")
+        self.graph.add_vertex("B")
+        self.graph.add_vertex("C")
+        self.graph.add_vertex("D")
+        self.graph.add_vertex("E")
+        self.graph.add_vertex("F")
+        self.graph.add_vertex("G")
 
+        # Add connections (non weighted edges for now)
+        self.graph.add_edge("A", "B")  # (A -> B)
+        self.graph.add_edge("A", "C")  # (A -> C)
+        self.graph.add_edge("B", "C")  # (B -> C)
+        self.graph.add_edge("C", "D")  # (C -> D)
+        self.graph.add_edge("C", "E")  # (C -> E)
+        self.graph.add_edge("C", "F")  # (C -> F)
+        self.graph.add_edge("A", "F")  # (A -> F)
+
+        # Bad input, starting vertex doesn't exist
+        value = self.graph.breadth_first_search(' R', 1)
+        assert value is None
+
+        # Inputting negative length
+        negative_length = self.graph.breadth_first_search(' A', -1)
+        assert negative_length is None
+
+        # Good input, starting vertex is A and find nodes that are 2 length away
+        vertex_array = self.graph.breadth_first_search("A", 2)
+        assert len(vertex_array) is 2
+        for vertex in vertex_array:
+            assert vertex.id is 'D' or vertex.id is 'E'
+
+        # Edge input, too big of a length
+        too_big = self.graph.breadth_first_search('A', 3)
+        assert len(too_big) is 0
