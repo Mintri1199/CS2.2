@@ -168,19 +168,19 @@ class GraphTests(unittest.TestCase):
         self.graph.add_edge("A", "F")  # (A -> F)
 
         # Bad input, starting vertex doesn't exist
-        value = self.graph.breadth_first_search(' R', 1)
+        value = self.graph.breadth_first_search_length(' R', 1)
         assert value is None
 
         # Inputting negative length
-        negative_length = self.graph.breadth_first_search(' A', -1)
+        negative_length = self.graph.breadth_first_search_length(' A', -1)
         assert negative_length is None
 
         # Good input, starting vertex is A and find nodes that are 2 length away
-        vertex_array = self.graph.breadth_first_search("A", 2)
+        vertex_array = self.graph.breadth_first_search_length("A", 2)
         assert len(vertex_array) is 2
         for vertex in vertex_array:
             assert vertex.id is 'D' or vertex.id is 'E'
 
         # Edge input, too big of a length
-        too_big = self.graph.breadth_first_search('A', 3)
+        too_big = self.graph.breadth_first_search_length('A', 3)
         assert len(too_big) is 0

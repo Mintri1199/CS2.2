@@ -151,11 +151,11 @@ class Graph:
         """Return true if the graph doesn't have any vertices"""
         return len(self.get_vertices()) is 0
 
-    def breadth_first_search(self, vertex, length):
+    def breadth_first_search_length(self, vertex, length):
         """
         Perform breadth first search and return all nodes that met
         the require length from the inputted vertex.
-        Runtime: O(n) where n is the number of vertices in the graph
+        Runtime: O(V + E)
         """
         if vertex not in self.vertices_dict:
             return
@@ -196,6 +196,57 @@ class Graph:
 
         return vertices
 
+    def find_path_BFS(self, from_vert, to_vert):  # Algorithm from Wikipedia and The Coding Train help understand it
+        """
+        Return a list of vertex that represent a path from one vertex to another
+        """
+        if from_vert not in self.vertices_dict or to_vert not in self.vertices_dict:
+            print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
+            return
+
+        elif from_vert == to_vert:
+            print('Both from vertex and to vertex are the same')
+            return [self.vertices_dict[from_vert]]
+
+        queue = LinkedQueue()
+        queue.enqueue((self.vertices_dict[from_vert], 0))   # Enqueue the from vertex
+
+        # A dictionary to keep track of the visited vertices along with their predecessor
+        visited_dict = {self.vertices_dict[from_vert].id: None}
+
+        while not queue.is_empty():
+
+            value = queue.dequeue()  # curr_vertex = (Vertex, length)
+
+            curr_vertex = value[0]
+
+            if curr_vertex.id == to_vert:
+                break
+
+            for neighbor in curr_vertex.get_neighbors():
+                if neighbor not in visited_dict:
+                    # Enqueue the neighbor with an incremented length
+                    new_value = (self.vertices_dict[neighbor], curr_vertex)
+                    queue.enqueue(new_value)
+
+                    # Add the neighbor to the visited dictionary
+                    visited_dict[new_value[0].id] = new_value[1]
+
+        path = [self.vertices_dict[to_vert]]
+
+        next_vertex = visited_dict[to_vert]
+
+        while next_vertex is not None:
+            path.append(next_vertex)
+            next_vertex = visited_dict[next_vertex.id]
+
+        path.reverse()
+
+        for vertex in path:
+            print(vertex.id)
+
+        return None
+
 # Driver code
 
 
@@ -222,15 +273,18 @@ if __name__ == "__main__":
     graph.add_edge("Friend C", "Friend F")
     graph.add_edge("Friend A", "Friend F")
     # Challenge 1: Output the vertices & edges
+    #
+    # print("The vertices are: ", graph.get_vertices(), "\n")
+    #
+    # print("The edges are: ")
+    # for edge in graph.get_edges():
+    #     print(edge)
 
-    print("The vertices are: ", graph.get_vertices(), "\n")
+    # # Chapter 3 BFS
+    # print("Vertices that are 2 away from Vertex friend A are:")
+    # array = graph.breadth_first_search_length("Friend A", 2)
+    # for vertex in array:
+    #     print(vertex.id)
 
-    print("The edges are: ")
-    for edge in graph.get_edges():
-        print(edge)
-
-    # Chapter 3 BFS
-    print("Vertices that are 2 away from Vertex friend A are:")
-    array = graph.breadth_first_search("Friend A", 2)
-    for vertex in array:
-        print(vertex.id)
+    # Chapter 4 Find path
+    graph.find_path_BFS('Friend A', "Friend D")
