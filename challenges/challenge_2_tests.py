@@ -1,4 +1,4 @@
-from challenge_1 import Graph, Vertex
+from challenge_2 import Graph, Vertex
 import unittest
 
 class VertexTests(unittest.TestCase):
@@ -94,6 +94,7 @@ class GraphTests(unittest.TestCase):
         # Vertex A should have an edge to vertex B with the cost of 10
         assert "B" in vertex_a.neighbors
         assert vertex_a.get_edge_weight("B") is 10
+        print(vertex_b.neighbors)
         assert "A" in vertex_b.neighbors
         assert vertex_b.get_edge_weight("A") is 10
 
@@ -172,4 +173,28 @@ class GraphTests(unittest.TestCase):
 
         for edge in expected_edges:
             assert edge in self.graph.edges_list
+
+    def test_shortest_path_bfs(self):
+        filename = 'graph_data.txt'
+        self.graph.read_file(filename)
+
+        shortest_path = [x.data for x in self.graph.find_path_bfs('1', '5')]
+
+        assert len(shortest_path) is 3
+
+        expected_path = ['1', '2', '5']
+
+        for i in range(len(expected_path)):
+            assert expected_path[i] is shortest_path[i]
+
+        # Test bad input
+        # Vertex doesn't exist
+        assert self.graph.find_path_bfs('1', '6') is None
+
+        # Test for disjointed graph and unable to find path
+        # Add disjointed vertices
+        self.graph.add_vertex('6')
+        assert self.graph.find_path_bfs('1', '6') is None
+
+
 

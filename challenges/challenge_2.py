@@ -66,6 +66,13 @@ class Graph:
 
         return new_vertex
 
+    def get_vertex(self, key):
+        """
+        Return the vertex if it exists
+        Runtime: O(1) since the graph store the vertices as a dictionary
+        """
+        return self.vertices_dict[key] if key in self.vertices_dict else None
+
     def add_edge(self, from_vert, to_vert, cost=0):
         """
         Add an edge from one to another vertex with a cost
@@ -85,7 +92,6 @@ class Graph:
         reversed_edge = (to_vert, from_vert, cost)
 
         # Prevent duplicate edges in simple graph
-        eh = self.edges_list
         if reversed_edge in self.edges_list and self.undirected:
             return
 
@@ -97,7 +103,7 @@ class Graph:
 
         # Add from_vertex as neighbor to to_vertex is it a simple graph
         if self.undirected:
-            neighbor_vertex = self.vertices_dict[from_vert]
+            neighbor_vertex = self.vertices_dict[to_vert]
             neighbor_vertex.add_neighbor(from_vert, cost)
 
     def get_vertices(self):
@@ -228,6 +234,10 @@ class Graph:
 
                     # Add the neighbor to the visited dictionary
                     visited_dict[new_value[0].data] = new_value[1]
+
+        # Cover case for disjointed graph
+        if to_vert not in visited_dict:
+            return
 
         path = [self.vertices_dict[to_vert]]
 
