@@ -1,10 +1,6 @@
-# Read line
-# If line only contain G then pass
-#   Any lines follow it that doesn't start with a open parenthesis
-#   are vertices.
-# If a line start with a open parenthesis then its an edge
-#   Continue until the file has been read
 import sys
+from linked_queue import LinkedQueue
+
 
 class Vertex(object):
 
@@ -150,7 +146,7 @@ class Graph:
             char = text[index]
 
             if char == '(':
-                pass
+                continue
 
             # Add the remaining key to the cost once the vertices have been found
             elif char == ')' and get_from and get_to and key != '':
@@ -196,15 +192,66 @@ class Graph:
                 if index == len(text) - 2:
                     self.add_vertex(curr_key)
 
+    def find_path_bfs(self, from_vert, to_vert):
+        """
+        Return a list of vertex that represent a path from one vertex to another
+        Runtime: O(V + E)
+        """
+        if from_vert not in self.vertices_dict or to_vert not in self.vertices_dict:
+            print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
+            return
+
+        elif from_vert == to_vert:
+            print('Both from vertex and to vertex are the same')
+            return [self.vertices_dict[from_vert]]
+
+        queue = LinkedQueue()
+        queue.enqueue((self.vertices_dict[from_vert], 0))   # Enqueue the from vertex
+
+        # A dictionary to keep track of the visited vertices along with their predecessor
+        visited_dict = {self.vertices_dict[from_vert].data: None}
+
+        while not queue.is_empty():
+
+            value = queue.dequeue()  # curr_vertex = (Vertex, length)
+
+            curr_vertex = value[0]
+
+            if curr_vertex.data == to_vert:
+                break
+
+            for neighbor in curr_vertex.get_neighbors():
+                if neighbor not in visited_dict:
+                    # Enqueue the neighbor with an incremented length
+                    new_value = (self.vertices_dict[neighbor], curr_vertex)
+                    queue.enqueue(new_value)
+
+                    # Add the neighbor to the visited dictionary
+                    visited_dict[new_value[0].data] = new_value[1]
+
+        path = [self.vertices_dict[to_vert]]
+
+        next_vertex = visited_dict[to_vert]
+
+        while next_vertex is not None:
+            path.append(next_vertex)
+            next_vertex = visited_dict[next_vertex.data]
+
+        path.reverse()
+
+        return path
+
 
 if __name__ == "__main__":
     # Create a graph
     graph = Graph()
-    filename = sys.argv[1]
+    # filename = sys.argv[1]
+    from_vertex = '1'  # sys.argv[2]
+    to_vertex = '5'  # sys.argv[3]
 
-    # temp_file = "graph_data.txt"
+    temp_file = "graph_data.txt"
 
-    graph.read_file(filename)
+    graph.read_file(temp_file)
 
     print("# Vertices: {}".format(graph.num_vertices))
     print("# Edges: {}".format(graph.num_edges))
@@ -212,6 +259,9 @@ if __name__ == "__main__":
     for edge in graph.get_edges():
         print(edge)
 
+    path = graph.find_path_bfs(from_vertex, to_vertex)
+    print('Vertices in shortest path: ' + ', '.join([x.data for x in path]))
+    print('Number of edges in shortest path: {}'.format(len(path)))
 
 
 

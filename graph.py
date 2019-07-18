@@ -199,6 +199,7 @@ class Graph:
     def find_path_BFS(self, from_vert, to_vert):  # Algorithm from Wikipedia and The Coding Train help understand it
         """
         Return a list of vertex that represent a path from one vertex to another
+        Runtime: O(V + E)
         """
         if from_vert not in self.vertices_dict or to_vert not in self.vertices_dict:
             print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
