@@ -1,10 +1,5 @@
-# Read line
-# If line only contain G then pass
-#   Any lines follow it that doesn't start with a open parenthesis
-#   are vertices.
-# If a line start with a open parenthesis then its an edge
-#   Continue until the file has been read
 import sys
+
 
 class Vertex(object):
 
@@ -22,7 +17,7 @@ class Vertex(object):
 
     def __str__(self):
         """output the list of neighbors of this vertex"""
-        return str(self.data) + " adjacent to:\n " + str([x + '\n' for x in self.neighbors.keys()])
+        return str(self.data) + " adjacent to: " + ', '.join([x for x in self.neighbors.keys()])
 
     def get_neighbors(self):
         """return the neighbors of this vertex"""
@@ -89,7 +84,6 @@ class Graph:
         reversed_edge = (to_vert, from_vert, cost)
 
         # Prevent duplicate edges in simple graph
-        eh = self.edges_list
         if reversed_edge in self.edges_list and self.undirected:
             return
 
@@ -101,7 +95,7 @@ class Graph:
 
         # Add from_vertex as neighbor to to_vertex is it a simple graph
         if self.undirected:
-            neighbor_vertex = self.vertices_dict[from_vert]
+            neighbor_vertex = self.vertices_dict[to_vert]
             neighbor_vertex.add_neighbor(from_vert, cost)
 
     def get_vertices(self):
@@ -117,6 +111,13 @@ class Graph:
         Runtime: O(1) since the graph store a list of edges
         """
         return self.edges_list
+
+    def get_vertex(self, key):
+        """
+        Return the vertex if it exists
+        Runtime: O(1) since the graph store the vertices as a dictionary
+        """
+        return self.vertices_dict[key] if key in self.vertices_dict else None
 
     def read_file(self, text_file):
         """
