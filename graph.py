@@ -196,7 +196,7 @@ class Graph:
 
         return vertices
 
-    def find_path_BFS(self, from_vert, to_vert):  # Algorithm from Wikipedia and The Coding Train help understand it
+    def find_path_bfs(self, from_vert, to_vert):  # Algorithm from Wikipedia and The Coding Train help understand it
         """
         Return a list of vertex that represent a path from one vertex to another
         Runtime: O(V + E)
@@ -233,6 +233,10 @@ class Graph:
                     # Add the neighbor to the visited dictionary
                     visited_dict[new_value[0].id] = new_value[1]
 
+        # If unable to find the path
+        if to_vert not in visited_dict:
+            return
+
         path = [self.vertices_dict[to_vert]]
 
         next_vertex = visited_dict[to_vert]
@@ -243,10 +247,7 @@ class Graph:
 
         path.reverse()
 
-        for vertex in path:
-            print(vertex.id)
-
-        return None
+        return path
 
 # Driver code
 
@@ -288,4 +289,4 @@ if __name__ == "__main__":
     #     print(vertex.id)
 
     # Chapter 4 Find path
-    graph.find_path_BFS('Friend A', "Friend D")
+    print(', '.join([x.id for x in graph.find_path_bfs('Friend A', "Friend D")]))

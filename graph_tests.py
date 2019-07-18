@@ -42,6 +42,26 @@ class GraphTests(unittest.TestCase):
     def setUp(self):
         self.graph = Graph()
 
+        self.populated_graph = Graph()
+        # Add vertices
+        self.populated_graph.add_vertex("A")
+        self.populated_graph.add_vertex("B")
+        self.populated_graph.add_vertex("C")
+        self.populated_graph.add_vertex("D")
+        self.populated_graph.add_vertex("E")
+        self.populated_graph.add_vertex("F")
+        self.populated_graph.add_vertex("G")
+
+        # Add connections (non weighted edges for now)
+        self.populated_graph.add_edge("A", "B")  # (A -> B)
+        self.populated_graph.add_edge("A", "C")  # (A -> C)
+        self.populated_graph.add_edge("B", "C")  # (B -> C)
+        self.populated_graph.add_edge("C", "D")  # (C -> D)
+        self.populated_graph.add_edge("C", "E")  # (C -> E)
+        self.populated_graph.add_edge("C", "F")  # (C -> F)
+        self.populated_graph.add_edge("A", "F")  # (A -> F)
+
+
     def test_init(self):
         assert not self.graph.vertices_dict
         assert self.graph.num_vertices is 0
@@ -148,39 +168,40 @@ class GraphTests(unittest.TestCase):
         assert ("A", "C", 5) in edges_set or ("C", "A", 5) in edges_set
         assert ("B", "C", 10) in edges_set or ("C", "B", 10) in edges_set
 
-    def test_BFS(self):
-        # Populate the graph with vertices
-        self.graph.add_vertex("A")
-        self.graph.add_vertex("B")
-        self.graph.add_vertex("C")
-        self.graph.add_vertex("D")
-        self.graph.add_vertex("E")
-        self.graph.add_vertex("F")
-        self.graph.add_vertex("G")
-
-        # Add connections (non weighted edges for now)
-        self.graph.add_edge("A", "B")  # (A -> B)
-        self.graph.add_edge("A", "C")  # (A -> C)
-        self.graph.add_edge("B", "C")  # (B -> C)
-        self.graph.add_edge("C", "D")  # (C -> D)
-        self.graph.add_edge("C", "E")  # (C -> E)
-        self.graph.add_edge("C", "F")  # (C -> F)
-        self.graph.add_edge("A", "F")  # (A -> F)
-
+    def test_bfs(self):
         # Bad input, starting vertex doesn't exist
-        value = self.graph.breadth_first_search_length(' R', 1)
+        value = self.populated_graph.breadth_first_search_length(' R', 1)
         assert value is None
 
         # Inputting negative length
-        negative_length = self.graph.breadth_first_search_length(' A', -1)
+        negative_length = self.populated_graph.breadth_first_search_length(' A', -1)
         assert negative_length is None
 
         # Good input, starting vertex is A and find nodes that are 2 length away
-        vertex_array = self.graph.breadth_first_search_length("A", 2)
+        vertex_array = self.populated_graph.breadth_first_search_length("A", 2)
         assert len(vertex_array) is 2
         for vertex in vertex_array:
             assert vertex.id is 'D' or vertex.id is 'E'
 
         # Edge input, too big of a length
-        too_big = self.graph.breadth_first_search_length('A', 3)
+        too_big = self.populated_graph.breadth_first_search_length('A', 3)
         assert len(too_big) is 0
+
+    def test_bfs_path(self):
+        shortest_path = [x.id for x in self.populated_graph.find_path_bfs('A', 'D')]
+
+        assert len(shortest_path) is 3
+
+        expected_path = ['A', 'C', 'D']
+
+        for i in range(len(expected_path)):
+            assert expected_path[i] is shortest_path[i]
+
+        # Test bad input
+        # Vertex doesn't exist
+        assert self.populated_graph.find_path_bfs('A', 'Z') is None
+
+        # Test for disjointed graph and unable to find path
+        # Add disjointed vertices
+        self.populated_graph.add_vertex('Q')
+        assert self.populated_graph.find_path_bfs('A', 'Q') is None
