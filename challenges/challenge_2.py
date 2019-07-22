@@ -1,7 +1,6 @@
 import sys
 from linked_queue import LinkedQueue
 
-
 class Vertex(object):
 
     def __init__(self, data):
@@ -255,13 +254,13 @@ class Graph:
 if __name__ == "__main__":
     # Create a graph
     graph = Graph()
-    # filename = sys.argv[1]
-    from_vertex = '1'  # sys.argv[2]
-    to_vertex = '5'  # sys.argv[3]
+    filename = sys.argv[1]
+    from_vertex = sys.argv[2]
+    to_vertex = sys.argv[3]
 
-    temp_file = "graph_data.txt"
+    # temp_file = "graph_data.txt"
 
-    graph.read_file(temp_file)
+    graph.read_file(filename)
 
     print("# Vertices: {}".format(graph.num_vertices))
     print("# Edges: {}".format(graph.num_edges))
