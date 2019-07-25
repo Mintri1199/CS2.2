@@ -1,0 +1,13 @@
+[
+  "challenge_2_tests.py::VertexTests::test_add_neighbor",
+  "challenge_2_tests.py::VertexTests::test_init",
+  "challenge_2_tests.py::VertexTests::test_negatives",
+  "challenge_2_tests.py::GraphTests::test_add_edge",
+  "challenge_2_tests.py::GraphTests::test_add_vertex",
+  "challenge_2_tests.py::GraphTests::test_get_edges",
+  "challenge_2_tests.py::GraphTests::test_get_vertex",
+  "challenge_2_tests.py::GraphTests::test_get_verticles",
+  "challenge_2_tests.py::GraphTests::test_init",
+  "challenge_2_tests.py::GraphTests::test_reading_file",
+  "challenge_2_tests.py::GraphTests::test_shortest_path_bfs"
+]

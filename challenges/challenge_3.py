@@ -1,5 +1,5 @@
 import sys
-from linked_queue import LinkedQueue
+# from linked_queue import LinkedQueue
 
 
 class Vertex(object):
@@ -198,59 +198,64 @@ class Graph:
                 if index == len(text) - 2:
                     self.add_vertex(curr_key)
 
-    def find_path_bfs(self, from_vert, to_vert):
+    def depth_first_search(self, start_vertex, target):
         """
-        Return a list of vertex that represent a path from one vertex to another
-        Runtime: O(V + E)
+        :param start_vertex:
+        :param target:
+        :return: Boolean value determine if there's a path between the two vertices
         """
-        if from_vert not in self.vertices_dict or to_vert not in self.vertices_dict:
-            print('{} or {} are not in dictionary of vertices'.format(from_vert, to_vert))
-            return
 
-        elif from_vert == to_vert:
-            print('Both from vertex and to vertex are the same')
-            return [self.vertices_dict[from_vert]]
+        if start_vertex not in self.vertices_dict or target not in self.vertices_dict:
+            return False
 
-        queue = LinkedQueue()
-        queue.enqueue((self.vertices_dict[from_vert], None))   # Enqueue the from vertex
+        visit_dict = {}
 
-        # A dictionary to keep track of the visited vertices along with their predecessor
-        visited_dict = {self.vertices_dict[from_vert].data: None}
+        self._dfs(self.vertices_dict[start_vertex], target, None, visit_dict)
 
-        while not queue.is_empty():
+        return visit_dict
 
-            value = queue.dequeue()  # curr_vertex = (Vertex,  Parent Vertex)
+    def _dfs(self, vertex, target, parent, visit):
+        visit[vertex.data] = parent
 
-            curr_vertex = value[0]
+        for neighbor in vertex.get_neighbors():
+            if neighbor not in visit:
+                if neighbor == target:
+                    visit[neighbor] = vertex
+                    return
 
-            if curr_vertex.data == to_vert:
-                break
+                self._dfs(self.vertices_dict[neighbor], target, vertex, visit)
 
-            for neighbor in curr_vertex.get_neighbors():
+    def depth_first_search_iter(self, start_vertex, target):
+        """
+        :param start_vertex: The string key of the starting vertex
+        :param target: The string key of the target vertex as a end point
+        :return Boolean,
+        """
 
-                if neighbor not in visited_dict:
-                    # Enqueue the neighbor along with the current vertex as the parent vertex
-                    new_value = (self.vertices_dict[neighbor], curr_vertex)
-                    queue.enqueue(new_value)
+        if start_vertex not in self.vertices_dict:
+            return False, []
 
-                    # Add the neighbor to the visited dictionary
-                    visited_dict[new_value[0].data] = new_value[1]
+        stack = []
+        stack.append(self.vertices_dict[start_vertex])
+        visited = {}
+        visited[start_vertex] = self.vertices_dict[start_vertex]
 
-        # Cover case for disjointed graph
-        if to_vert not in visited_dict:
-            return
+        while len(stack) != 0:
 
-        path = [self.vertices_dict[to_vert]]
+            vertex = stack.pop()
 
-        next_vertex = visited_dict[to_vert]
+            if vertex.data == target:
+                return True, visited.keys()
 
-        while next_vertex is not None:
-            path.append(next_vertex)
-            next_vertex = visited_dict[next_vertex.data]
+            for neighbor in vertex.get_neighbors():
+                if neighbor not in visited:
+                    visited[neighbor] = self.vertices_dict[neighbor]
+                    stack.append(self.vertices_dict[vertex.data])
+                    stack.append(self.vertices_dict[neighbor])
+                    
+                    break
 
-        path.reverse()
-
-        return path
+        return False , []
 
 
 if __name__ == "__main__":
@@ -260,7 +265,7 @@ if __name__ == "__main__":
     from_vertex = sys.argv[2]
     to_vertex = sys.argv[3]
 
-    # temp_file = "graph_data.txt"
+    temp_file = "challenge_3_data.txt"
 
     graph.read_file(filename)
 
@@ -270,9 +275,9 @@ if __name__ == "__main__":
     for edge in graph.get_edges():
         print(edge)
 
-    path = graph.find_path_bfs(from_vertex, to_vertex)
-    print('Vertices in shortest path: ' + ', '.join([x.data for x in path]))
-    print('Number of edges in shortest path: {}'.format(len(path) - 1))
-
-
+    found, path = graph.depth_first_search_iter('1', '5')
+    print(path)
+    print("Is the a path from vertex {} to vertex {}: {}".format('1', '5', str(found)))
+    if found:
+        print('Depth first search path: ' + ', '.join([x for x in path]))
 

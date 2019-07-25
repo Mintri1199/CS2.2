@@ -1,4 +1,4 @@
-from challenge_2 import Graph, Vertex
+from challenge_3 import Graph, Vertex
 import unittest
 
 class VertexTests(unittest.TestCase):
@@ -40,6 +40,25 @@ class GraphTests(unittest.TestCase):
 
     def setUp(self):
         self.graph = Graph()
+
+        self.populated_graph = Graph()
+        # Add vertices
+        self.populated_graph.add_vertex("A")
+        self.populated_graph.add_vertex("B")
+        self.populated_graph.add_vertex("C")
+        self.populated_graph.add_vertex("D")
+        self.populated_graph.add_vertex("E")
+        self.populated_graph.add_vertex("F")
+        self.populated_graph.add_vertex("G")
+
+        # Add connections (non weighted edges for now)
+        self.populated_graph.add_edge("A", "B", 4)  # (A -> B)
+        self.populated_graph.add_edge("A", "C", 6)  # (A -> C)
+        self.populated_graph.add_edge("B", "C", 8)  # (B -> C)
+        self.populated_graph.add_edge("C", "D", 9)  # (C -> D)
+        self.populated_graph.add_edge("C", "E", 1)  # (C -> E)
+        self.populated_graph.add_edge("C", "F", 90)  # (C -> F)
+        self.populated_graph.add_edge("A", "F", 12)  # (A -> F)
 
     def test_init(self):
         assert not self.graph.vertices_dict
@@ -174,24 +193,28 @@ class GraphTests(unittest.TestCase):
         for edge in expected_edges:
             assert edge in self.graph.edges_list
 
-    def test_shortest_path_bfs(self):
-        filename = 'graph_data.txt'
-        self.graph.read_file(filename)
+    def test_depth_first_search(self):
+        found, path = self.populated_graph.depth_first_search_iter('A', 'E')
 
-        shortest_path = [x.data for x in self.graph.find_path_bfs('1', '5')]
+        assert found is True
+        assert len(path) is 5
 
-        assert len(shortest_path) is 3
+        expected_keys = ['A', 'B', 'C', 'D', 'E']
 
-        expected_path = ['1', '2', '5']
-
-        for i in range(len(expected_path)):
-            assert expected_path[i] is shortest_path[i]
+        for key in expected_keys:
+            assert key in expected_keys
 
         # Test bad input
-        # Vertex doesn't exist
-        assert self.graph.find_path_bfs('1', '6') is None
+        found, path = self.populated_graph.depth_first_search_iter('A', 'R')
+        assert found is False
+        assert len(path) is 0
 
-        # Test for disjointed graph and unable to find path
-        # Add disjointed vertices
-        self.graph.add_vertex('6')
-        assert self.graph.find_path_bfs('1', '6') is None
+        # Test edges cases
+        # Can't find a path for a disjointed graph
+        self.populated_graph.add_vertex('O')
+
+        found, path = self.populated_graph.depth_first_search_iter('A', 'R')
+        assert found is False
+        assert len(path) is 0
+
+

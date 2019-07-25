@@ -1,4 +1,4 @@
-from linked_list import LinkedList
+from challenges.linked_list import LinkedList
 
 
 class LinkedQueue(object):
