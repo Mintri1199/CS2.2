@@ -237,37 +237,50 @@ class Graph:
 
         stack = []
         stack.append(self.vertices_dict[start_vertex])
+
         visited = {}
-        visited[start_vertex] = self.vertices_dict[start_vertex]
+        visited[start_vertex] = (self.vertices_dict[start_vertex], None)
 
         while len(stack) != 0:
 
             vertex = stack.pop()
 
             if vertex.data == target:
-                return True, visited.keys()
+                path = []
+                key = target
+                while True:
+                    vert = visited[key]
+                    path.append(vert[0].data)
+
+                    if vert[1] is not None:
+                        key = vert[1].data
+
+                    else:
+                        break
+                path.reverse()
+                return True, path
 
             for neighbor in vertex.get_neighbors():
                 if neighbor not in visited:
-                    visited[neighbor] = self.vertices_dict[neighbor]
+                    visited[neighbor] = (self.vertices_dict[neighbor], vertex)
                     stack.append(self.vertices_dict[vertex.data])
                     stack.append(self.vertices_dict[neighbor])
-                    
+
                     break
 
-        return False , []
+        return False, []
 
 
 if __name__ == "__main__":
     # Create a graph
     graph = Graph()
-    filename = sys.argv[1]
-    from_vertex = sys.argv[2]
-    to_vertex = sys.argv[3]
+    # filename = sys.argv[1]
+    # from_vertex = sys.argv[2]
+    # to_vertex = sys.argv[3]
 
     temp_file = "challenge_3_data.txt"
 
-    graph.read_file(filename)
+    graph.read_file(temp_file)
 
     print("# Vertices: {}".format(graph.num_vertices))
     print("# Edges: {}".format(graph.num_edges))
@@ -275,9 +288,9 @@ if __name__ == "__main__":
     for edge in graph.get_edges():
         print(edge)
 
-    found, path = graph.depth_first_search_iter('1', '5')
+    found, path = graph.depth_first_search_iter('1', '3')
     print(path)
-    print("Is the a path from vertex {} to vertex {}: {}".format('1', '5', str(found)))
+    # print("Is the a path from vertex {} to vertex {}: {}".format('1', '5', str(found)))
     if found:
         print('Depth first search path: ' + ', '.join([x for x in path]))
 
